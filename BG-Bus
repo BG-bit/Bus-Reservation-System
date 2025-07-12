@@ -1,0 +1,135 @@
+#include <iostream>
+using namespace std;
+
+int immediateseat = 10, futureseat = 40;
+
+void greet() {
+    cout << "Welcome to Dawit Bus Reservation System" << endl;
+
+}
+
+int getChoice(int min, int max) {
+    int choice;
+    cout << "Enter your choice (" << min << "-" << max << "): ";
+    cin >> choice;
+    while (choice < min ||choice > max) {
+        cout << "Invalid input. Try again (" << min << "-" << max << "): ";
+        cin >> choice;
+    }
+    return choice;
+}
+
+bool isNotNumber(const string& input) {
+    for (char c : input)
+        if (c < '0' || c > '9') return true;
+    return false;
+}
+
+void inputInfo(string& name, string& phone) {
+    cout << "Enter your name: ";
+    cin >> name;
+    while (!isNotNumber(name)) {
+        cout << "Invalid name. Numbers are not allowed. Try again: ";
+        cin >> name;
+    }
+    cout << "Enter your phone number: ";
+    cin >> phone;
+}
+
+
+bool place(string& start, string& end, string& date, bool& now) {
+    cout << "Choose starting address:\n 1. Adama\n 2. Arbaminch\n 3. Hawasa(1-3) ";
+    cin >> start;
+if (start != "1" &&  start != "2" && start != "3") {
+    cout << "We don't have any route over there. Please choose from:\n";
+    cout << "1. Adama\n 2. Arbaminch\n 3. Hawasa(1-3)\n";
+    return false;
+}
+
+cout << "\nAnd next please choose your final destination:\n 1. Adama\n 2. Arbaminch\n 3. Hawasa(1-3)\n";
+cin >> end;
+
+if (end != "1" && end != "2" && end != "3") {
+    cout << "We don't have any route over there. Please re-enter from:\n";
+    cout << "1. Adama\n 2. Arbaminch\n 3. Hawasa(1-3)\n";
+    return false;
+}
+
+if (end == start) {
+    cout << "Starting and ending point can't be the same. Try again.\n";
+    return false;
+}
+
+int choice1;
+cout << "Is it an immediate reservation?\n(press 0 for Yes, 1 for No): ";
+cin >> choice1;
+
+switch (choice1) {
+    case 0:
+        now = true;
+        date = "07/11/2017";
+        cout << "Available date: " << date << " at 03:00 AM\n";
+        break;
+    case 1:
+        now = false;
+        cout << "Enter your travel date (dd/mm/yyyy): ";
+        cin >> date;
+        break;
+    default:
+        cout << "Invalid choice. Please enter 0 or 1.\n";
+        return false;
+}
+    return true;
+}
+void showPrice(bool now) {
+    if (now) {
+        cout << "\nAvailable seats: " << immediateseat << endl;
+        cout << "Ticket price: 400 Birr" << endl;
+    } else {
+        cout << "\nAvailable seats: " << futureseat << endl;
+        cout << "Ticket price: 300 Birr" << endl;
+    }
+}
+
+void pay(bool now) {
+    if (futureseat == 0) return;
+    cout << "Proceed to payment? (1 for Yes, 0 for No): ";
+    int confirm = getChoice(0, 1);
+    if (confirm == 1) {
+        cout << "Payment successful. Your reservation is confirmed." << endl;
+        futureseat--;
+    } else {
+        cout << "Payment cancelled." << endl;
+    }
+}
+
+void summary(const string& name, const string& phone, const string& start, const string& date, const string& end) {
+    cout << "\nReservation Summary:" << endl;
+    cout << "Name: " << name << endl;
+    cout << "Phone: " << phone << endl;
+    cout << "Destination: " << start << " to " << end <<endl;
+    cout << "Date: " << date << endl;
+}
+
+int main() {
+    greet();
+
+    string name, phone, start, end, date;
+    bool now;
+
+    inputInfo(name, phone);  // Step 1: Get user info
+
+    // Step 2: Collect route and reservation type
+    bool validReservation = place(start, end, date, now);
+
+    // Step 3: Only continue if inputs were valid
+    if (validReservation) {
+        showPrice(now);
+        pay(now);
+        summary(name, phone, start, date, end);
+    } else {
+        cout << "\nReservation setup failed. Please restart and enter valid inputs.\n";
+    }
+
+    return 0;
+}
